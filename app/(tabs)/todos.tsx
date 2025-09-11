@@ -395,8 +395,7 @@ export default function Todos() {
               />
             </View>
           </View>
-          
-         
+
         </>
       )}
     </SafeAreaView>
