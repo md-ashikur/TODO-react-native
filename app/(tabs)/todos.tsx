@@ -1,9 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useIsFocused } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
-import { MotiView } from 'moti';
+import { AnimatePresence, MotiView } from 'moti';
 import React, { useEffect, useMemo, useState } from 'react';
-import { FlatList, LayoutAnimation, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, UIManager, View } from 'react-native';
+import { FlatList, LayoutAnimation, Platform, Pressable, StyleSheet, Text, TextInput, UIManager, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useAuth } from '../_AuthContext';
@@ -32,6 +33,12 @@ export default function Todos() {
   // Lists
   const [lists, setLists] = useState<ListType[]>([]);
   const [selectedListId, setSelectedListId] = useState<string>('inbox');
+  const isFocused = useIsFocused();
+  const [cycle, setCycle] = useState(0);
+
+  useEffect(() => {
+    if (isFocused) setCycle(c => (c + 1) % 1000);
+  }, [isFocused]);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -170,17 +177,21 @@ export default function Todos() {
     <SafeAreaView style={styles.container}>
       {showPlaceholder ? null : (
         <>
+          <AnimatePresence>
           <MotiView 
-            from={{ opacity: 0, translateY: -50 }}
+            key={`hdr-${cycle}`}
+            from={{ opacity: 0, translateY: -100 }}
             animate={{ opacity: 1, translateY: 0 }}
-            transition={{ type: 'spring', damping: 15, delay: 0 }}
+     
+            transition={{ type: 'spring', damping: 17, delay: 40 }}
             style={styles.header}
           >
             <View style={styles.headerTop}>
               <MotiView
-                from={{ opacity: 0, translateX: -30 }}
+                key={`ttl-${cycle}`}
+                from={{ opacity: 0, translateX: -32 }}
                 animate={{ opacity: 1, translateX: 0 }}
-                transition={{ type: 'spring', damping: 15, delay: 200 }}
+                transition={{ type: 'spring', damping: 16, delay: 160 }}
               >
                 <Text style={styles.title}>Your Todos</Text>
                 <Text style={styles.subtitle}>
@@ -188,9 +199,10 @@ export default function Todos() {
                 </Text>
               </MotiView>
               <MotiView
-                from={{ opacity: 0, scale: 0 }}
+                key={`lo-${cycle}`}
+                from={{ opacity: 0, scale: 0.4 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ type: 'spring', damping: 15, delay: 400 }}
+                transition={{ type: 'spring', damping: 16, delay: 260 }}
               >
                 <Pressable onPress={async () => { await logout(); router.replace('/(tabs)'); }} style={styles.logoutButton}>
                   <Ionicons name="log-out-outline" size={24} color="#ff3b30" />
@@ -198,17 +210,11 @@ export default function Todos() {
               </MotiView>
             </View>
           </MotiView>
+          </AnimatePresence>
 
           <View style={styles.content}>
             {/* Lists selector */}
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.listsRow}>
-              {lists.map((l) => (
-                <Pressable key={l.id} onPress={() => setSelectedListId(l.id)} style={[styles.listChip, selectedListId === l.id && { backgroundColor: l.color, borderColor: l.color }]}>
-                  <View style={[styles.listDot, { backgroundColor: l.color }]} />
-                  <Text style={[styles.listChipText, selectedListId === l.id && { color: '#fff' }]}>{l.name}</Text>
-                </Pressable>
-              ))}
-            </ScrollView>
+          
 
             <View style={styles.summaryRow}>
               <View style={styles.badge}>
@@ -228,9 +234,11 @@ export default function Todos() {
             </View>
 
             <MotiView 
-              from={{ opacity: 0, translateY: 30 }}
+              key={`srch-${cycle}`}
+              from={{ opacity: 0, translateY: 34 }}
               animate={{ opacity: 1, translateY: 0 }}
-              transition={{ type: 'spring', damping: 15, delay: 600 }}
+              exit={{ opacity: 0, translateY: 10 }}
+              transition={{ type: 'spring', damping: 17, delay: 520 }}
               style={styles.searchRow}
             >
               <View style={styles.searchBox}>
@@ -246,10 +254,10 @@ export default function Todos() {
               <View style={styles.filters}>
                 {(['all', 'active', 'completed'] as const).map((f, index) => (
                   <MotiView
-                    key={f}
-                    from={{ opacity: 0, scale: 0.8 }}
+                    key={`${f}-${cycle}`}
+                    from={{ opacity: 0, scale: 0.7 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ type: 'spring', damping: 15, delay: 800 + index * 100 }}
+                    transition={{ type: 'spring', damping: 16, delay: 640 + index * 90 }}
                   >
                     <Pressable onPress={() => setFilter(f)} style={[styles.chip, filter === f && styles.chipActive]}>
                       <Text style={[styles.chipText, filter === f && styles.chipTextActive]}>
@@ -260,10 +268,13 @@ export default function Todos() {
                 ))}
               </View>
             </MotiView>
+
             <MotiView 
-              from={{ opacity: 0, translateY: 50 }}
+              key={`input-${cycle}`}
+              from={{ opacity: 0, translateY: 54 }}
               animate={{ opacity: 1, translateY: 0 }}
-              transition={{ type: 'spring', damping: 15, delay: 1100 }}
+              exit={{ opacity: 0, translateY: 16 }}
+              transition={{ type: 'spring', damping: 18, delay: 760 }}
               style={styles.inputSection}
             >
               <View style={styles.inputContainer}>
@@ -280,18 +291,21 @@ export default function Todos() {
                 <Ionicons name="add" size={20} color="#fff" />
               </Pressable>
             </MotiView>
+
             <MotiView 
-              from={{ opacity: 0, translateY: 30 }}
+              key={`prio-${cycle}`}
+              from={{ opacity: 0, translateY: 36 }}
               animate={{ opacity: 1, translateY: 0 }}
-              transition={{ type: 'spring', damping: 15, delay: 1300 }}
+              exit={{ opacity: 0, translateY: 12 }}
+              transition={{ type: 'spring', damping: 18, delay: 980 }}
               style={styles.priorityRow}
             >
               {(['low', 'medium', 'high'] as const).map((p, index) => (
                 <MotiView
-                  key={p}
-                  from={{ opacity: 0, scale: 0.8 }}
+                  key={`${p}-${cycle}`}
+                  from={{ opacity: 0, scale: 0.7 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  transition={{ type: 'spring', damping: 15, delay: 1500 + index * 100 }}
+                  transition={{ type: 'spring', damping: 16, delay: 1120 + index * 90 }}
                 >
                   <Pressable onPress={() => setPriority(p)} style={[styles.priorityChip, priority === p && styles.priorityChipActive(p)]}>
                     <View style={[styles.priorityDot, p === 'low' ? { backgroundColor: '#34C759' } : p === 'medium' ? { backgroundColor: '#FFCC00' } : { backgroundColor: '#ff3b30' }]} />
@@ -307,7 +321,6 @@ export default function Todos() {
               <Text style={styles.sectionTitle}>
                 Tasks ({items.filter(item => !item.done).length} pending)
               </Text>
-              
               <FlatList
                 data={filtered}
                 keyExtractor={(i) => i.id}
@@ -318,11 +331,7 @@ export default function Todos() {
                     from={{ opacity: 0, translateY: 50, scale: 0.9 }}
                     animate={{ opacity: 1, translateY: 0, scale: 1 }}
                     exit={{ opacity: 0, translateY: -50, scale: 0.9 }}
-                    transition={{ 
-                      type: 'spring', 
-                      damping: 15, 
-                      delay: index * 100 
-                    }}
+                    transition={{ type: 'spring', damping: 15, delay: index * 90 }}
                   >
                     <View style={[styles.todoCard, item.done && styles.todoCardDone]}>
                       <Pressable onPress={() => toggle(item.id)} style={styles.todoContent}>
@@ -335,7 +344,6 @@ export default function Todos() {
                               {item.done && <Ionicons name="checkmark" size={16} color="#fff" />}
                             </View>
                           </MotiView>
-                          <View style={[styles.priorityPill, item.priority === 'low' ? styles.pillLow : item.priority === 'medium' ? styles.pillMed : styles.pillHigh]} />
                           {editingId === item.id ? (
                             <TextInput
                               value={editingText}
@@ -356,29 +364,19 @@ export default function Todos() {
                       </Pressable>
                       <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
                         {editingId === item.id ? (
-                          <MotiView
-                            from={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            transition={{ type: 'spring', damping: 15 }}
-                          >
+                          <MotiView from={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', damping: 15 }}>
                             <Pressable onPress={saveEdit} style={styles.iconButton}>
                               <Ionicons name="save-outline" size={18} color="#667eea" />
                             </Pressable>
                           </MotiView>
                         ) : (
-                          <MotiView
-                            animate={{ scale: 1 }}
-                            transition={{ type: 'spring', damping: 15 }}
-                          >
+                          <MotiView animate={{ scale: 1 }} transition={{ type: 'spring', damping: 15 }}>
                             <Pressable onPress={() => startEdit(item.id, item.text)} style={styles.iconButton}>
                               <Ionicons name="pencil-outline" size={18} color="#667eea" />
                             </Pressable>
                           </MotiView>
                         )}
-                        <MotiView
-                          animate={{ scale: 1 }}
-                          transition={{ type: 'spring', damping: 15 }}
-                        >
+                        <MotiView animate={{ scale: 1 }} transition={{ type: 'spring', damping: 15 }}>
                           <Pressable onPress={() => remove(item.id)} style={styles.removeButton}>
                             <Ionicons name="trash-outline" size={18} color="#ff3b30" />
                           </Pressable>
@@ -413,7 +411,8 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: '#667eea',
     paddingHorizontal: 20,
-    paddingBottom: 20,
+    paddingTop: 30,
+    paddingBottom: 80,
     borderBottomLeftRadius: 25,
     borderBottomRightRadius: 25,
   },
@@ -442,7 +441,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
   },
-  listsRow: { flexDirection: 'row', gap: 10, paddingBottom: 8, marginBottom: 8 },
+  listsRow: { flexDirection: 'row', gap: 1, paddingBottom: 0, marginBottom: 0 },
   listChip: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#fff', borderWidth: 1, borderColor: '#eee', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 999 },
   listDot: { width: 8, height: 8, borderRadius: 4 },
   listChipText: { color: '#333', fontWeight: '700', fontSize: 12 },
