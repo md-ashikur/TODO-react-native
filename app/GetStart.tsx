@@ -1,54 +1,107 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import React from 'react';
+import { MotiView } from 'moti';
+import React, { useEffect } from 'react';
 import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useAuth } from './_AuthContext';
 
 export default function GetStart() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { user, loading } = useAuth();
+
+  useEffect(() => {
+    if (!loading && user) {
+      router.replace('/(tabs)/todos');
+    }
+  }, [loading, user, router]);
+
+  if (loading || user) return null;
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={[styles.header, { paddingTop: insets.top + 24}]}>
-        <Ionicons name="checkmark-circle" size={80} color="#fff" />
-        <Text style={styles.title}>Welcome to Todo App</Text>
-        <Text style={styles.subtitle}>Organize your tasks efficiently</Text>
-      </View>
+      <MotiView 
+        from={{ opacity: 0, translateY: -50 }}
+        animate={{ opacity: 1, translateY: 0 }}
+        transition={{ type: 'timing', duration: 800 }}
+        style={[styles.header, { paddingTop: insets.top + 24}]}
+      >
+        <MotiView
+          from={{ scale: 0, rotate: '180deg' }}
+          animate={{ scale: 1, rotate: '0deg' }}
+          transition={{ type: 'spring', delay: 300, damping: 12 }}
+        >
+          <Ionicons name="checkmark-circle" size={80} color="#fff" />
+        </MotiView>
+        <MotiView
+          from={{ opacity: 0, translateY: 20 }}
+          animate={{ opacity: 1, translateY: 0 }}
+          transition={{ type: 'timing', duration: 600, delay: 500 }}
+        >
+          <Text style={styles.title}>Welcome to Todo App</Text>
+        </MotiView>
+        <MotiView
+          from={{ opacity: 0, translateY: 20 }}
+          animate={{ opacity: 1, translateY: 0 }}
+          transition={{ type: 'timing', duration: 600, delay: 700 }}
+        >
+          <Text style={styles.subtitle}>Organize your tasks efficiently</Text>
+        </MotiView>
+      </MotiView>
       
   <View style={styles.content}>
         <View style={styles.featuresContainer}>
-          <View style={styles.feature}>
-            <Ionicons name="add-circle-outline" size={24} color="#667eea" />
-            <Text style={styles.featureText}>Create and manage tasks</Text>
-          </View>
-          
-          <View style={styles.feature}>
-            <Ionicons name="checkmark-done-outline" size={24} color="#667eea" />
-            <Text style={styles.featureText}>Track your progress</Text>
-          </View>
-          
-          <View style={styles.feature}>
-            <Ionicons name="cloud-outline" size={24} color="#667eea" />
-            <Text style={styles.featureText}>Sync across devices</Text>
-          </View>
+          {[
+            { icon: "add-circle-outline", text: "Create and manage tasks", delay: 900 },
+            { icon: "checkmark-done-outline", text: "Track your progress", delay: 1100 },
+            { icon: "cloud-outline", text: "Sync across devices", delay: 1300 }
+          ].map((feature, index) => (
+            <MotiView
+              key={index}
+              from={{ opacity: 0, translateX: -50 }}
+              animate={{ opacity: 1, translateX: 0 }}
+              transition={{ type: 'spring', delay: feature.delay, damping: 15 }}
+              style={styles.feature}
+            >
+              <Ionicons name={feature.icon as any} size={24} color="#667eea" />
+              <Text style={styles.featureText}>{feature.text}</Text>
+            </MotiView>
+          ))}
         </View>
         
-  <View style={[styles.buttons, { paddingBottom: insets.bottom + 8 }]}>
-          <Pressable 
-            onPress={() => router.push('register' as any)} 
-            style={styles.primaryButton}
+  <MotiView 
+          from={{ opacity: 0, translateY: 50 }}
+          animate={{ opacity: 1, translateY: 0 }}
+          transition={{ type: 'spring', delay: 1500, damping: 12 }}
+          style={[styles.buttons, { paddingBottom: insets.bottom + 8 }]}
+        >
+          <MotiView
+            from={{ scale: 0.8 }}
+            animate={{ scale: 1 }}
+            transition={{ type: 'spring', delay: 1600 }}
           >
-            <Text style={styles.primaryButtonText}>Get Started</Text>
-          </Pressable>
+            <Pressable 
+              onPress={() => router.push('register' as any)} 
+              style={styles.primaryButton}
+            >
+              <Text style={styles.primaryButtonText}>Get Started</Text>
+            </Pressable>
+          </MotiView>
           
-          <Pressable 
-            onPress={() => router.push('login' as any)} 
-            style={styles.secondaryButton}
+          <MotiView
+            from={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: 'spring', delay: 1800 }}
           >
-            <Text style={styles.secondaryButtonText}>I already have an account</Text>
-          </Pressable>
-        </View>
+            <Pressable 
+              onPress={() => router.push('login' as any)} 
+              style={styles.secondaryButton}
+            >
+              <Text style={styles.secondaryButtonText}>I already have an account</Text>
+            </Pressable>
+          </MotiView>
+        </MotiView>
       </View>
   </SafeAreaView>
   );

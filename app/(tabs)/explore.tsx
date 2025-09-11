@@ -1,110 +1,92 @@
+import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
-
-import { Collapsible } from '@/components/Collapsible';
-import { ExternalLink } from '@/components/ExternalLink';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+import { useRouter } from 'expo-router';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function TabTwoScreen() {
+  const router = useRouter();
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Explore</ThemedText>
-      </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        <Image source={require('@/assets/images/react-logo.png')} style={{ alignSelf: 'center' }} />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Custom fonts">
-        <ThemedText>
-          Open <ThemedText type="defaultSemiBold">app/_layout.tsx</ThemedText> to see how to load{' '}
-          <ThemedText style={{ fontFamily: 'SpaceMono' }}>
-            custom fonts such as this one.
-          </ThemedText>
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/versions/latest/sdk/font">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful <ThemedText type="defaultSemiBold">react-native-reanimated</ThemedText>{' '}
-          library to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.hero}>
+        <View>
+          <Text style={styles.heroTitle}>Explore</Text>
+          <Text style={styles.heroSubtitle}>Discover tips and jump into your tasks faster.</Text>
+        </View>
+        <Image source={require('../../assets/images/partial-react-logo.png')} style={styles.heroImage} contentFit="cover" />
+      </View>
+
+      <View style={styles.quickActions}>
+        <Pressable style={[styles.qAction, { backgroundColor: '#eef2ff' }]} onPress={() => router.push('/(tabs)/todos')}>
+          <Ionicons name="add-circle" size={24} color="#667eea" />
+          <Text style={styles.qActionText}>New Task</Text>
+        </Pressable>
+        <Pressable style={[styles.qAction, { backgroundColor: '#e8fff3' }]} onPress={() => router.push('/(tabs)/todos')}>
+          <Ionicons name="list" size={24} color="#34C759" />
+          <Text style={styles.qActionText}>My Lists</Text>
+        </Pressable>
+        <Pressable style={[styles.qAction, { backgroundColor: '#fff7ec' }]} onPress={() => router.push('/(tabs)/todos')}>
+          <Ionicons name="alarm" size={24} color="#ff9500" />
+          <Text style={styles.qActionText}>Set Reminder</Text>
+        </Pressable>
+      </View>
+
+      <View style={styles.cards}>
+        <View style={styles.card}>
+          <View style={[styles.cardIcon, { backgroundColor: '#eef2ff' }]}>
+            <Ionicons name="sparkles-outline" size={22} color="#667eea" />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.cardTitle}>Organize with Lists</Text>
+            <Text style={styles.cardText}>Group tasks into lists like Work, Personal, or Ideas.</Text>
+          </View>
+          <Pressable onPress={() => router.push('/(tabs)/todos')} style={styles.cardCta}>
+            <Text style={styles.cardCtaText}>Open</Text>
+          </Pressable>
+        </View>
+        <View style={styles.card}>
+          <View style={[styles.cardIcon, { backgroundColor: '#fff7ec' }]}>
+            <Ionicons name="notifications-outline" size={22} color="#ff9500" />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.cardTitle}>Never miss a deadline</Text>
+            <Text style={styles.cardText}>Add reminders with date & time; get notified right on time.</Text>
+          </View>
+          <Pressable onPress={() => router.push('/(tabs)/todos')} style={styles.cardCta}>
+            <Text style={styles.cardCtaText}>Try</Text>
+          </Pressable>
+        </View>
+        <View style={styles.card}>
+          <View style={[styles.cardIcon, { backgroundColor: '#e8fff3' }]}>
+            <Ionicons name="stats-chart-outline" size={22} color="#34C759" />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.cardTitle}>Track progress</Text>
+            <Text style={styles.cardText}>See pending and done counts, search and filter quickly.</Text>
+          </View>
+          <Pressable onPress={() => router.push('/(tabs)/todos')} style={styles.cardCta}>
+            <Text style={styles.cardCtaText}>View</Text>
+          </Pressable>
+        </View>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
-  },
-  titleContainer: {
-    flexDirection: 'row',
-    gap: 8,
-  },
+  container: { flex: 1, backgroundColor: '#f8f9fa' },
+  hero: { backgroundColor: '#667eea', padding: 20, paddingBottom: 26, borderBottomLeftRadius: 24, borderBottomRightRadius: 24, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  heroTitle: { color: '#fff', fontSize: 28, fontWeight: '800' },
+  heroSubtitle: { color: '#e8eaff', marginTop: 6 },
+  heroImage: { width: 80, height: 80, borderRadius: 16, opacity: 0.9 },
+  quickActions: { flexDirection: 'row', gap: 12, paddingHorizontal: 20, marginTop: -22 },
+  qAction: { flex: 1, borderRadius: 14, paddingVertical: 14, paddingHorizontal: 12, alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOpacity: 0.08, shadowRadius: 8, elevation: 3 },
+  qActionText: { marginTop: 8, color: '#222', fontWeight: '700' },
+  cards: { padding: 20, gap: 12 },
+  card: { backgroundColor: '#fff', borderRadius: 14, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12, shadowColor: '#000', shadowOpacity: 0.08, shadowRadius: 8, elevation: 3 },
+  cardIcon: { width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+  cardTitle: { fontSize: 16, fontWeight: '700', color: '#111' },
+  cardText: { color: '#666', marginTop: 2 },
+  cardCta: { paddingHorizontal: 12, paddingVertical: 8, backgroundColor: '#eef2ff', borderRadius: 10 },
+  cardCtaText: { color: '#667eea', fontWeight: '700' },
 });
